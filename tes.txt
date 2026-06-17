@@ -1,0 +1,21 @@
+Nama Tim: [Nama Tim Anda]
+
+Anggota Tim:
+1. [NIM] - Peter Lin
+2. [NIM] - [Nama Anggota Lainnya]
+
+Teknologi & Template:
+Front-End: React.js (Vite)
+Back-End: Node.js, Express.js
+Database: MongoDB
+Template: Dikembangkan dari awal tanpa template pihak ketiga.
+
+Inovasi & Kreativitas:
+Platform pencarian kerja cerdas untuk mendukung Smart Economy. Memiliki 3 role pengguna (Pencari Kerja, Perusahaan, Super Admin) dengan fitur tracking status lamaran real-time dan dashboard agregasi data terpusat.
+
+Link Hostingan:
+[Tautan Web Front-End Anda Nanti]
+
+Akun Admin:
+Username: admin@smarteconomy.com
+Password: adminsecure123
