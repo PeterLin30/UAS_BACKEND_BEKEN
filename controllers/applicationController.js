@@ -4,10 +4,26 @@ const Job = require('../models/Job');
 const applyForJob = async (req, res) => {
     try {
         const { jobId } = req.body;
-        const resumeUrl = req.file ? req.file.path : null;
-        if (!resumeUrl) {
-            return res.status(400).json({ message: 'File CV wajib diunggah' });
+
+        const existingApplication = await Application.findOne({
+            jobId: jobId,
+            applicantId: req.user._id
+        });
+
+        if (existingApplication) {
+            return res.status(400).json({ message: 'Anda sudah melamar pekerjaan ini sebelumnya.' });
         }
+
+        if (req.file && req.file.mimetype !== 'application/pdf') {
+            return res.status(400).json({ message: 'Dokumen ditolak server! Format mutlak harus PDF.' });
+        }
+
+        const resumeUrl = req.file ? req.file.path : null;
+        
+        if (!resumeUrl) {
+            return res.status(400).json({ message: 'File CV berformat PDF wajib diunggah' });
+        }
+
         const application = await Application.create({
             jobId,
             applicantId: req.user._id,
@@ -33,12 +49,15 @@ const updateApplicationStatus = async (req, res) => {
     try {
         const { status } = req.body;
         const application = await Application.findById(req.params.id).populate('jobId');
+        
         if (!application) {
             return res.status(404).json({ message: 'Application not found' });
         }
+        
         if (application.jobId.employerId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
             return res.status(401).json({ message: 'Not authorized' });
         }
+        
         application.status = status;
         await application.save();
         res.json(application);

@@ -2,7 +2,11 @@ const Job = require('../models/Job');
 
 const createJob = async (req, res) => {
     try {
-        const { title, description, requirements, salary, location, jobType } = req.body;
+        const { title, description, requirements, salary, location, jobType, validityDays } = req.body;
+        
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + parseInt(validityDays));
+
         const job = await Job.create({
             employerId: req.user._id,
             title,
@@ -10,7 +14,8 @@ const createJob = async (req, res) => {
             requirements,
             salary,
             location,
-            jobType
+            jobType,
+            expiresAt
         });
         res.status(201).json(job);
     } catch (error) {
@@ -21,7 +26,10 @@ const createJob = async (req, res) => {
 const getJobs = async (req, res) => {
     try {
         const { keyword, location, jobType } = req.query;
-        let query = {};
+        let query = {
+            expiresAt: { $gte: new Date() }
+        };
+        
         if (keyword) {
             query.title = { $regex: keyword, $options: 'i' };
         }
@@ -31,6 +39,7 @@ const getJobs = async (req, res) => {
         if (jobType) {
             query.jobType = jobType;
         }
+        
         const jobs = await Job.find(query).populate('employerId', 'name companyDetails');
         res.json(jobs);
     } catch (error) {

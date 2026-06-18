@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
@@ -7,11 +8,12 @@ const applicationRoutes = require('./routes/applicationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 require('dotenv').config();
 
-connectDB();
-
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173", // Sesuaikan dengan port React Anda
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,3 +32,11 @@ app.listen(PORT, () => {
     console.log(`🔗 Akses lokal: http://localhost:${PORT}`);
     console.log(`=========================================`);
 });
+
+// Pastikan ini ada di server.js
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => {
+      console.error("❌ MONGODB CONNECTION ERROR:", err); // Ini akan memberitahu kenapa dia mati!
+      process.exit(1); 
+  });
