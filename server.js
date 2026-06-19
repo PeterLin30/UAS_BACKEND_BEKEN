@@ -1,6 +1,6 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const jobRoutes = require('./routes/jobRoutes');
@@ -12,11 +12,11 @@ const app = express();
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Mengizinkan semua origin (sangat aman untuk proyek UAS)
         callback(null, true);
     },
     credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
