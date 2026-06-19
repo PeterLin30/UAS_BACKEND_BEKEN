@@ -58,4 +58,23 @@ const loginUser = async (req, res) => {
     }
 };
 
+const createAdmin = async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const admin = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: 'admin' // Role dipaksa menjadi admin
+        });
+
+        res.status(201).json({ message: "Admin berhasil dibuat", adminId: admin._id });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = { registerUser, loginUser };
