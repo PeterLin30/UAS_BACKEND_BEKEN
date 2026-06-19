@@ -41,4 +41,8 @@ mongoose.connect(process.env.MONGO_URI)
       process.exit(1); 
   });
 
+app.get('/', (req, res) => {
+    res.status(200).json({ message: "API Smart Economy Berjalan Sempurna di Vercel! 🚀" });
+});
+
   module.exports = app;
