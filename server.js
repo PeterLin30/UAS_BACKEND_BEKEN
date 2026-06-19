@@ -26,12 +26,12 @@ app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`=========================================`);
-    console.log(`🚀 Server berhasil berjalan di port ${PORT}`);
-    console.log(`🔗 Akses lokal: http://localhost:${PORT}`);
-    console.log(`=========================================`);
-});
+if (!process.env.VERCEL) {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`🚀 Server berjalan di port ${PORT}`);
+    });
+}
 
 // Pastikan ini ada di server.js
 mongoose.connect(process.env.MONGO_URI)
