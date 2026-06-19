@@ -40,3 +40,5 @@ mongoose.connect(process.env.MONGO_URI)
       console.error("❌ MONGODB CONNECTION ERROR:", err); // Ini akan memberitahu kenapa dia mati!
       process.exit(1); 
   });
+
+  module.exports = app;
