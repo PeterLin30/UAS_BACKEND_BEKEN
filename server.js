@@ -49,3 +49,5 @@ app.get('/', (req, res) => {
 });
 
   module.exports = app;
+
+// Memaksa Vercel membaca JWT_SECRET yang baru
