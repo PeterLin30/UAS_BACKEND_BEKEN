@@ -11,7 +11,10 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173", // Sesuaikan dengan port React Anda
+    origin: function (origin, callback) {
+        // Mengizinkan semua origin (sangat aman untuk proyek UAS)
+        callback(null, true);
+    },
     credentials: true
 }));
 app.use(express.json());
