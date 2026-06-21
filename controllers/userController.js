@@ -17,6 +17,7 @@ const updateProfile = async (req, res) => {
 
         if (req.body.name) user.name = req.body.name;
         
+        user.profileDetails.phoneNumber = req.body.phoneNumber ?? user.profileDetails.phoneNumber;
         user.profileDetails.education = req.body.education ?? user.profileDetails.education;
         user.profileDetails.hasExperience = req.body.hasExperience ?? user.profileDetails.hasExperience;
         user.profileDetails.experienceText = req.body.experienceText ?? user.profileDetails.experienceText;
