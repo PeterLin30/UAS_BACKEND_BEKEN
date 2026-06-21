@@ -63,4 +63,50 @@ const getPlatformStats = async (req, res) => {
     }
 };
 
-module.exports = { verifyCompany, toggleUserStatus, createCategory, getPlatformStats };
+const getAdminStats = async (req, res) => {
+    try {
+        const totalSeekers = await User.countDocuments({ role: 'seeker' });
+        const totalEmployers = await User.countDocuments({ role: 'employer' });
+        const totalJobs = await Job.countDocuments();
+        const totalApplications = await Application.countDocuments();
+        res.json({ seekers: totalSeekers, employers: totalEmployers, jobs: totalJobs, applications: totalApplications });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const deleteJobByAdmin = async (req, res) => {
+    try {
+        await Job.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Lowongan berhasil dimoderasi' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const addCategory = async (req, res) => {
+    try {
+        const { name } = req.body;
+        const categoryExists = await Category.findOne({ name });
+        
+        if (categoryExists) {
+            return res.status(400).json({ message: 'Kategori sudah ada' });
+        }
+        
+        const category = await Category.create({ name });
+        res.status(201).json(category);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getCategories = async (req, res) => {
+    try {
+        const categories = await Category.find();
+        res.json(categories);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { verifyCompany, toggleUserStatus, createCategory, getPlatformStats ,getAdminStats, deleteJobByAdmin, addCategory, getCategories};

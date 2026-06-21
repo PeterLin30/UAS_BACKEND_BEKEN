@@ -25,25 +25,29 @@ const createJob = async (req, res) => {
 
 const getJobs = async (req, res) => {
     try {
-        const { keyword, location, jobType } = req.query;
-        let query = {
-            expiresAt: { $gte: new Date() }
-        };
-        
+        const { keyword, location, category, minEducation, requiresExperience } = req.query;
+        let query = {};
+
         if (keyword) {
             query.title = { $regex: keyword, $options: 'i' };
         }
         if (location) {
             query.location = { $regex: location, $options: 'i' };
         }
-        if (jobType) {
-            query.jobType = jobType;
+        if (category) {
+            query.category = category;
         }
-        
-        const jobs = await Job.find(query).populate('employerId', 'name companyDetails');
+        if (minEducation) {
+            query.minEducation = minEducation;
+        }
+        if (requiresExperience) {
+            query.requiresExperience = requiresExperience === 'true';
+        }
+
+        const jobs = await Job.find(query).populate('employerId', 'name');
         res.json(jobs);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 

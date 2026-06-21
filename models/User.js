@@ -9,16 +9,13 @@ const userSchema = new mongoose.Schema({
         enum: ['seeker', 'employer', 'admin'], 
         default: 'seeker' 
     },
-    // FONDASI FITUR PROFIL BARU
+    bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }],
     profileDetails: {
-        // Untuk Pelamar (Seeker)
-        education: { type: String, default: '' }, // Contoh: 'S1 Teknik Informatika'
-        hasExperience: { type: Boolean, default: false }, // true jika punya pengalaman
-        experienceText: { type: String, default: '' }, // Detail pengalamannya
-        
-        // Untuk Perekrut (Employer)
+        education: { type: String, default: '' },
+        hasExperience: { type: Boolean, default: false },
+        experienceText: { type: String, default: '' },
         companyName: { type: String, default: '' },
-        companyIndustry: { type: String, default: '' }, // Contoh: 'Perbankan & Layanan Finansial'
+        companyIndustry: { type: String, default: '' },
         companyDescription: { type: String, default: '' }
     }
 }, { timestamps: true });
