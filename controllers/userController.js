@@ -3,28 +3,41 @@ const User = require('../models/User');
 const updateProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'Pengguna tidak ditemukan' });
 
-        if (!user) {
-            return res.status(404).json({ message: 'Pengguna tidak ditemukan' });
-        }
-
-        // Perbarui atribut profil jika ada dalam permintaan
-        user.profileDetails = {
-            ...user.profileDetails,
-            ...req.body
-        };
+        if (req.body.name) user.name = req.body.name;
+        
+        user.profileDetails.education = req.body.education ?? user.profileDetails.education;
+        user.profileDetails.hasExperience = req.body.hasExperience ?? user.profileDetails.hasExperience;
+        user.profileDetails.experienceText = req.body.experienceText ?? user.profileDetails.experienceText;
+        user.profileDetails.companyName = req.body.companyName ?? user.profileDetails.companyName;
+        user.profileDetails.companyIndustry = req.body.companyIndustry ?? user.profileDetails.companyIndustry;
+        user.profileDetails.companyDescription = req.body.companyDescription ?? user.profileDetails.companyDescription;
 
         const updatedUser = await user.save();
-
-        res.json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            profileDetails: updatedUser.profileDetails
-        });
+        res.json({ _id: updatedUser._id, name: updatedUser.name, profileDetails: updatedUser.profileDetails });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
-module.exports = { updateProfile };
+const getAllSeekers = async (req, res) => {
+    try {
+        const seekers = await User.find({ role: 'seeker' }).select('-password');
+        res.json(seekers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getUserProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if (!user) return res.status(404).json({ message: 'Pengguna tidak ditemukan' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { updateProfile, getAllSeekers, getUserProfile };
