@@ -2,23 +2,23 @@ const Job = require('../models/Job');
 
 const createJob = async (req, res) => {
     try {
-        const { title, description, requirements, salary, location, jobType, validityDays } = req.body;
-        
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + parseInt(validityDays));
+        // Tangkap data baru dari Front-End
+        const { title, description, location, salary, category, minEducation, requiresExperience } = req.body;
 
         const job = await Job.create({
             employerId: req.user._id,
             title,
             description,
-            requirements,
-            salary,
             location,
-            jobType,
-            expiresAt
+            salary,
+            category,             // Simpan kategori
+            minEducation,         // Simpan minimal pendidikan
+            requiresExperience    // Simpan syarat pengalaman
         });
+
         res.status(201).json(job);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };

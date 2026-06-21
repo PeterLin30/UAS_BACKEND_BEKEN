@@ -8,7 +8,4 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-// Rute pendaftaran admin
-router.post('/register-admin-first', createAdmin);
-
 module.exports = router;
