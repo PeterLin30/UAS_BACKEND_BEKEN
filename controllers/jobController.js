@@ -2,24 +2,26 @@ const Job = require('../models/Job');
 
 const createJob = async (req, res) => {
     try {
-        // Tangkap data baru dari Front-End
         const { title, description, location, salary, category, minEducation, requiresExperience } = req.body;
+
+        if (!category) {
+            return res.status(400).json({ message: 'Kategori mutlak harus diisi!' });
+        }
 
         const job = await Job.create({
             employerId: req.user._id,
             title,
             description,
             location,
-            salary,
-            category,             // Simpan kategori
-            minEducation,         // Simpan minimal pendidikan
-            requiresExperience    // Simpan syarat pengalaman
+            salary: salary ? Number(salary) : 0,
+            category,
+            minEducation,
+            requiresExperience
         });
 
         res.status(201).json(job);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -44,8 +46,20 @@ const getJobs = async (req, res) => {
             query.requiresExperience = requiresExperience === 'true';
         }
 
-        const jobs = await Job.find(query).populate('employerId', 'name');
+        const jobs = await Job.find(query).populate('employerId', 'name profileDetails');
         res.json(jobs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getJobById = async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id).populate('employerId', 'name profileDetails');
+        if (!job) {
+            return res.status(404).json({ message: 'Lowongan tidak ditemukan' });
+        }
+        res.json(job);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -83,4 +97,4 @@ const deleteJob = async (req, res) => {
     }
 };
 
-module.exports = { createJob, getJobs, updateJob, deleteJob };
+module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob };
