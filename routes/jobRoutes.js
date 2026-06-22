@@ -1,9 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { createJob, getJobs, updateJob, deleteJob } = require('../controllers/jobController');
+const { createJob, getJobs, getJobById, updateJob, deleteJob } = require('../controllers/jobController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-router.route('/').get(getJobs).post(protect, authorize('employer', 'admin'), createJob);
-router.route('/:id').put(protect, authorize('employer', 'admin'), updateJob).delete(protect, authorize('employer', 'admin'), deleteJob);
-router.post('/', protect, authorize('employer'), createJob);
+// === Rute Publik (Bisa diakses Pelamar tanpa perlu login khusus perusahaan) ===
+router.get('/', getJobs);
+router.get('/:id', getJobById); // Rute penarik detail & profil perusahaan yang sebelumnya hilang
+
+// === Rute Terlindungi (Hanya Perekrut & Admin yang punya akses) ===
+router.post('/', protect, authorize('employer', 'admin'), createJob);
+router.put('/:id', protect, authorize('employer', 'admin'), updateJob);
+router.delete('/:id', protect, authorize('employer', 'admin'), deleteJob);
+
 module.exports = router;
