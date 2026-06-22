@@ -45,7 +45,9 @@ const applyForJob = async (req, res) => {
 const getJobApplicants = async (req, res) => {
     try {
         const { jobId } = req.params;
-        const applications = await Application.find({ jobId }).populate('applicantId', 'name email profileDetails');
+        const applications = await Application.find({ jobId })
+            .populate('applicantId', 'name email profileDetails') 
+            .sort({ createdAt: -1 });
         res.json(applications);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
