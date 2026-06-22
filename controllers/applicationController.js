@@ -27,12 +27,13 @@ const applyForJob = async (req, res) => {
             return res.status(400).json({ message: 'Anda sudah melamar pekerjaan ini sebelumnya.' });
         }
 
+        // PERBAIKAN MUTLAK: Sesuaikan nama field dan enum status dengan database
         const application = await Application.create({
             jobId,
             applicantId: req.user._id,
-            resume,
+            resumeUrl: resume, // Petakan 'resume' dari Front-End ke 'resumeUrl'
             coverLetter,
-            status: 'pending'
+            status: 'Review'   // Gunakan 'Review' bukan 'pending'
         });
         
         res.status(201).json(application);
