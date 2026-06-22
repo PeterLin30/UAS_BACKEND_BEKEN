@@ -13,22 +13,31 @@ const getMyProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
-        if (!user) return res.status(404).json({ message: 'Pengguna tidak ditemukan' });
-
-        if (req.body.name) user.name = req.body.name;
         
-        user.profileDetails.phoneNumber = req.body.phoneNumber ?? user.profileDetails.phoneNumber;
-        user.profileDetails.education = req.body.education ?? user.profileDetails.education;
-        user.profileDetails.hasExperience = req.body.hasExperience ?? user.profileDetails.hasExperience;
-        user.profileDetails.experienceText = req.body.experienceText ?? user.profileDetails.experienceText;
-        user.profileDetails.companyName = req.body.companyName ?? user.profileDetails.companyName;
-        user.profileDetails.companyIndustry = req.body.companyIndustry ?? user.profileDetails.companyIndustry;
-        user.profileDetails.companyDescription = req.body.companyDescription ?? user.profileDetails.companyDescription;
+        if (!user) {
+            return res.status(404).json({ message: 'Identitas pengguna tidak ditemukan.' });
+        }
 
-        const updatedUser = await user.save();
-        res.json({ _id: updatedUser._id, name: updatedUser.name, profileDetails: updatedUser.profileDetails });
+        user.name = req.body.name || user.name;
+        
+        if (req.body.profileDetails) {
+            user.profileDetails = {
+                ...user.profileDetails,
+                ...req.body.profileDetails
+            };
+        }
+
+        await user.save();
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            profileDetails: user.profileDetails
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Gagal memperbarui pangkalan data: ' + error.message });
     }
 };
 
