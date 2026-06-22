@@ -3,10 +3,19 @@ const Job = require('../models/Job');
 
 const applyForJob = async (req, res) => {
     try {
-        const { jobId } = req.body;
+        const { jobId, resume, coverLetter } = req.body;
 
         if (!jobId) {
-            return res.status(400).json({ message: 'ID Pekerjaan tidak valid atau kosong dalam permintaan.' });
+            return res.status(400).json({ message: 'ID Pekerjaan tidak valid.' });
+        }
+
+        if (!resume) {
+            return res.status(400).json({ message: 'Dokumen CV wajib diunggah.' });
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ message: 'Lowongan tidak ditemukan.' });
         }
 
         const existingApplication = await Application.findOne({
@@ -18,37 +27,26 @@ const applyForJob = async (req, res) => {
             return res.status(400).json({ message: 'Anda sudah melamar pekerjaan ini sebelumnya.' });
         }
 
-        if (!req.file) {
-            return res.status(400).json({ message: 'File CV berformat PDF wajib diunggah' });
-        }
-
-        if (req.file.mimetype !== 'application/pdf') {
-            return res.status(400).json({ message: 'Dokumen ditolak server! Format mutlak harus PDF.' });
-        }
-
-        const base64Data = req.file.buffer.toString('base64');
-        const resumeUrl = `data:${req.file.mimetype};base64,${base64Data}`;
-
         const application = await Application.create({
             jobId,
             applicantId: req.user._id,
-            resumeUrl
+            resume,
+            coverLetter,
+            status: 'pending'
         });
         
         res.status(201).json(application);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server Error: ' + error.message });
     }
 };
 
-const getApplicationsByJob = async (req, res) => {
+const getJobApplicants = async (req, res) => {
     try {
         const { jobId } = req.params;
         const applications = await Application.find({ jobId }).populate('applicantId', 'name email profileDetails');
         res.json(applications);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
@@ -70,19 +68,22 @@ const updateApplicationStatus = async (req, res) => {
         await application.save();
         res.json(application);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
 const getMyApplications = async (req, res) => {
     try {
-        const applications = await Application.find({ applicantId: req.user._id }).populate('jobId', 'title location salary');
+        const applications = await Application.find({ applicantId: req.user._id })
+            .populate({
+                path: 'jobId',
+                populate: { path: 'employerId', select: 'name profileDetails' }
+            })
+            .sort({ createdAt: -1 });
         res.json(applications);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
-module.exports = { applyForJob, getApplicationsByJob, updateApplicationStatus, getMyApplications };
+module.exports = { applyForJob, getJobApplicants, updateApplicationStatus, getMyApplications };
