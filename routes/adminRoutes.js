@@ -9,6 +9,8 @@ const {
     getCategories 
 } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const { getAdminStats, addCategory, getAllUsers } = require('../controllers/adminController'); 
+const { protect, admin } = require('../middleware/authMiddleware');
 
 router.put('/verify-company/:id', protect, authorize('admin'), verifyCompany);
 router.put('/toggle-user/:id', protect, authorize('admin'), toggleUserStatus);
@@ -17,5 +19,5 @@ router.post('/categories', protect, authorize('admin'), addCategory);
 router.delete('/job/:id', protect, authorize('admin'), deleteJobByAdmin);
 
 router.get('/categories', getCategories);
-
+router.get('/users', protect, admin, getAllUsers);
 module.exports = router;
