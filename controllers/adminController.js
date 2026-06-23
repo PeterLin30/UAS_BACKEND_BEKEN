@@ -109,4 +109,13 @@ const getCategories = async (req, res) => {
     }
 };
 
-module.exports = { verifyCompany, toggleUserStatus, createCategory, getPlatformStats ,getAdminStats, deleteJobByAdmin, addCategory, getCategories};
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select('-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Gagal mengambil data pengguna' });
+    }
+};
+
+module.exports = { verifyCompany, toggleUserStatus, createCategory, getPlatformStats ,getAdminStats, deleteJobByAdmin, addCategory, getCategories, getAllUsers};
