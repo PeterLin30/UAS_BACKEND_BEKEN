@@ -68,13 +68,24 @@ const getJobById = async (req, res) => {
 const updateJob = async (req, res) => {
     try {
         const job = await Job.findById(req.params.id);
+        
         if (!job) {
-            return res.status(404).json({ message: 'Job not found' });
+            return res.status(404).json({ message: 'Lowongan tidak ditemukan' });
         }
+        
         if (job.employerId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-            return res.status(401).json({ message: 'Not authorized' });
+            return res.status(403).json({ message: 'Akses ditolak. Anda hanya boleh mengedit lowongan milik perusahaan Anda sendiri.' });
         }
-        const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        
+        job.title = req.body.title || job.title;
+        job.description = req.body.description || job.description;
+        job.location = req.body.location || job.location;
+        job.salary = req.body.salary !== undefined ? Number(req.body.salary) : job.salary;
+        job.category = req.body.category || job.category;
+        job.minEducation = req.body.minEducation || job.minEducation;
+        job.requiresExperience = req.body.requiresExperience !== undefined ? req.body.requiresExperience : job.requiresExperience;
+        
+        const updatedJob = await job.save();
         res.json(updatedJob);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
@@ -84,14 +95,17 @@ const updateJob = async (req, res) => {
 const deleteJob = async (req, res) => {
     try {
         const job = await Job.findById(req.params.id);
+        
         if (!job) {
-            return res.status(404).json({ message: 'Job not found' });
+            return res.status(404).json({ message: 'Lowongan tidak ditemukan' });
         }
+        
         if (job.employerId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-            return res.status(401).json({ message: 'Not authorized' });
+            return res.status(403).json({ message: 'Akses ditolak. Anda hanya boleh menghapus lowongan milik perusahaan Anda sendiri.' });
         }
+        
         await job.deleteOne();
-        res.json({ message: 'Job removed' });
+        res.json({ message: 'Lowongan berhasil dihapus secara permanen.' });
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
