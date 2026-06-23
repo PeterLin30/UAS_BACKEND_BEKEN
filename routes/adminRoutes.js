@@ -19,5 +19,6 @@ router.post('/categories', protect, authorize('admin'), addCategory);
 router.delete('/job/:id', protect, authorize('admin'), deleteJobByAdmin);
 
 router.get('/categories', getCategories);
-router.get('/users', protect, admin, getAllUsers);
+router.get('/user', protect, admin, getAllUsers);
+
 module.exports = router;
