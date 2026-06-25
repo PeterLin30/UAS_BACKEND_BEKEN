@@ -33,6 +33,7 @@ const updateProfile = async (req, res) => {
         else if (pd.description !== undefined) user.profileDetails.companyDescription = pd.description;
         else if (pd.about !== undefined) user.profileDetails.companyDescription = pd.about;
 
+        user.markModified('profileDetails');
         await user.save();
 
         res.json({
