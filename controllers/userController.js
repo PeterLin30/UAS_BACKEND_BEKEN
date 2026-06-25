@@ -22,6 +22,7 @@ const updateProfile = async (req, res) => {
         
         const pd = req.body.profileDetails || req.body;
 
+        if (pd.phoneNumber !== undefined) user.profileDetails.phoneNumber = pd.phoneNumber;
         if (pd.education !== undefined) user.profileDetails.education = pd.education;
         if (pd.hasExperience !== undefined) user.profileDetails.hasExperience = pd.hasExperience;
         if (pd.experienceText !== undefined) user.profileDetails.experienceText = pd.experienceText;

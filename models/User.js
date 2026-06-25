@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     },
     bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }],
     profileDetails: {
+        phoneNumber: { type: String, default: '' },
         education: { type: String, default: '' },
         hasExperience: { type: Boolean, default: false },
         experienceText: { type: String, default: '' },
