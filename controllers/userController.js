@@ -20,12 +20,18 @@ const updateProfile = async (req, res) => {
 
         user.name = req.body.name || user.name;
         
-        if (req.body.profileDetails) {
-            user.profileDetails = {
-                ...user.profileDetails,
-                ...req.body.profileDetails
-            };
-        }
+        const pd = req.body.profileDetails || req.body;
+
+        if (pd.education !== undefined) user.profileDetails.education = pd.education;
+        if (pd.hasExperience !== undefined) user.profileDetails.hasExperience = pd.hasExperience;
+        if (pd.experienceText !== undefined) user.profileDetails.experienceText = pd.experienceText;
+        
+        if (pd.companyName !== undefined) user.profileDetails.companyName = pd.companyName;
+        if (pd.companyIndustry !== undefined) user.profileDetails.companyIndustry = pd.companyIndustry;
+        
+        if (pd.companyDescription !== undefined) user.profileDetails.companyDescription = pd.companyDescription;
+        else if (pd.description !== undefined) user.profileDetails.companyDescription = pd.description;
+        else if (pd.about !== undefined) user.profileDetails.companyDescription = pd.about;
 
         await user.save();
 
