@@ -10,12 +10,28 @@ require('dotenv').config();
 
 const app = express();
 
+// --- GERBANG KEAMANAN CORS MUTLAK ---
+const allowedOrigins = [
+    'https://apxgp-utama.vercel.app',
+    'https://apxgp-cadangan1.vercel.app',
+    'https://apxgp-cadangan2.vercel.app',
+    'https://apxgp-cadangan3.vercel.app',
+    'https://apxgp-cadangan4.vercel.app',
+    'https://uas-backend-fronen.vercel.app'
+];
+
 app.use(cors({
     origin: function (origin, callback) {
-        callback(null, true);
+        // Izinkan request jika origin terdaftar, ATAU jika tidak ada origin (seperti akses dari Postman)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Diblokir oleh Sistem Keamanan CORS API APXGP'));
+        }
     },
     credentials: true
 }));
+// --- BATAS GERBANG KEAMANAN ---
 
 app.use(express.json({ limit: '10mb' })); 
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -27,10 +43,8 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes')); // Catatan: Rute admin ini terdeklarasi 2 kali, tapi tidak merusak sistem
 app.use('/api/bookmarks', require('./routes/bookmarkRoutes'));
-
-const PORT = process.env.PORT || 5000;
 
 if (!process.env.VERCEL) {
     const PORT = process.env.PORT || 5000;
@@ -51,6 +65,5 @@ app.get('/', (req, res) => {
     res.status(200).json({ message: "API Smart Economy Berjalan Sempurna di Vercel! 🚀" });
 });
 
-  module.exports = app;
-
+module.exports = app;
 // Memaksa Vercel membaca JWT_SECRET yang baru
