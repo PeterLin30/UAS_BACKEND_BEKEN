@@ -12,12 +12,11 @@ const app = express();
 
 // --- GERBANG KEAMANAN CORS MUTLAK ---
 const allowedOrigins = [
-    'https://apxgp-utama.vercel.app',
-    'https://apxgp-cadangan1.vercel.app',
-    'https://apxgp-cadangan2.vercel.app',
-    'https://apxgp-cadangan3.vercel.app',
-    'https://apxgp-cadangan4.vercel.app',
-    'https://uas-backend-fronen.vercel.app'
+    'https://uas-backend-fronen.vercel.app', // Tautan pertama Anda (SUDAH AKTIF)
+    'https://apxgp-cadangan1.vercel.app',    // Tunggu deploy akun ke-2
+    'https://apxgp-cadangan2.vercel.app',    // Tunggu deploy akun ke-3
+    'https://apxgp-cadangan3.vercel.app',    // Tunggu deploy akun ke-4
+    'https://apxgp-cadangan4.vercel.app'     // Tunggu deploy akun ke-5
 ];
 
 app.use(cors({
